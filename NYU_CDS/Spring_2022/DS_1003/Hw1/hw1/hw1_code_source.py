@@ -129,9 +129,9 @@ for i in range(100):
     g_x.append(g_val)
 
     fb_val = b_est @ np.array([x[i] ** 0, x[i] ** 1, x[i] ** 2])
-    fb_x.append(g_val)
+    fb_x.append(fb_val)
 
-
+plt.figure(0)
 plt.scatter(x_train, y_train) 
 plt.plot(x, fb_x, 'b', label = 'f_b(x)')
 plt.plot(x, g_x, 'g')
@@ -144,6 +144,7 @@ plt.show()
 
 for i in range(1,5):
     d = i
+
     x_train_10 = get_design_mat(x_train, d)
     x_test_10 = get_design_mat(x_test, d)
 
@@ -158,8 +159,294 @@ print('The minimum value at which we can get a near perfect fit is d = 2')
 ### PROBLEM ELEVEN ###
 ######################
 
+###################
+## PLOT TWO MAIN ##
+###################
 
+### D = 2 ###
+
+N_2 = []
+et_2 = []
+eg_2 = []
+for i in range(3,1003):
+    d = 2
+    a = get_a(d)
+
+    x_train11, y_train11 = draw_sample_with_noise(d, a, i)
+    x_train11 = get_design_mat(x_train11, d)
+    x_test11, y_test11 = draw_sample_with_noise(d, a, i)
+    x_test11 = get_design_mat(x_test11, d)
+
+    b_est = least_square_estimator(x_train11, y_train11)
+
+    e_t = np.log(empirical_risk(x_train11, y_train11, b_est))
+    e_g = np.log(empirical_risk(x_test11, y_test11, b_est))
+
+    N_2.append(i)
+    et_2.append(e_t)
+    eg_2.append(e_g)
+
+plt.plot(N_2, et_2)
+plt.plot(N_2, eg_2)
+
+### D = 5 ###
+
+N_5 = []
+et_5 = []
+eg_5 = []
+for i in range(6,1006):
+    d = 5
+    a = get_a(d)
+
+    x_train11, y_train11 = draw_sample_with_noise(d, a, i)
+    x_train11 = get_design_mat(x_train11, d)
+    x_test11, y_test11 = draw_sample_with_noise(d, a, i)
+    x_test11 = get_design_mat(x_test11, d)
+
+    b_est = least_square_estimator(x_train11, y_train11)
+
+    e_t = np.log(empirical_risk(x_train11, y_train11, b_est))
+    e_g = np.log(empirical_risk(x_test11, y_test11, b_est))
+
+    N_5.append(i)
+    et_5.append(e_t)
+    eg_5.append(e_g)
+
+plt.plot(N_2, et_5)
+plt.plot(N_2, eg_5)
+
+### D = 10 ###
+
+N_10 = []
+et_10 = []
+eg_10 = []
+for i in range(11,1011):
+    d = 10
+    a = get_a(d)
+
+    x_train11, y_train11 = draw_sample_with_noise(d, a, i)
+    x_train11 = get_design_mat(x_train11, d)
+    x_test11, y_test11 = draw_sample_with_noise(d, a, i)
+    x_test11 = get_design_mat(x_test11, d)
+
+    b_est = least_square_estimator(x_train11, y_train11)
+
+    e_t = np.log(empirical_risk(x_train11, y_train11, b_est))
+    e_g = np.log(empirical_risk(x_test11, y_test11, b_est))
+
+    N_10.append(i)
+    et_10.append(e_t)
+    eg_10.append(e_g)
+
+plt.plot(N_2, et_10)
+plt.plot(N_2, eg_10)
+
+ax = plt.gca()
+ax.set_ylim([-10, 15])
+
+plt.legend(labels=['d=2 e_t','d=2 e_g','d=5 e_t', 'd=5 e_g', 'd=10 e_t','d=10 e_g'])
+#%%
+###################
+## PLOT 2, d = 2 ##
+###################
+
+## N = 100
+
+d = 2
+a = get_a(d)
+
+x_train11, y_train11 = draw_sample_with_noise(d, a, 100)
+x_train11_mat = get_design_mat(x_train11, d)
+x_test11, y_test11 = draw_sample_with_noise(d, a, 100)
+x_test11 = get_design_mat(x_test11, d)
+
+b_est = least_square_estimator(x_train11_mat, y_train11)
+
+x = np.linspace(0, 1, num=100)
+g_x = []
+fb_x = []
+for i in range(100):
+    g_val = a @ np.array([x[i] ** 0, x[i] ** 1, x[i] ** 2])
+    g_x.append(g_val)
+
+    fb_val = b_est @ np.array([x[i] ** 0, x[i] ** 1, x[i] ** 2])
+    fb_x.append(fb_val)
+
+plt.figure(1)
+plt.plot(x, g_x)
+plt.plot(x, fb_x)
+plt.scatter(x_train11, y_train11, color = 'green') 
+plt.legend(['g(x)', 'f_b(x)', 'training data'])
+plt.show()
+
+#%%
+## N = 500
+
+d = 2
+a = get_a(d)
+
+x_train11, y_train11 = draw_sample_with_noise(d, a, 500)
+x_train11_mat = get_design_mat(x_train11, d)
+x_test11, y_test11 = draw_sample_with_noise(d, a, 500)
+x_test11 = get_design_mat(x_test11, d)
+
+b_est = least_square_estimator(x_train11_mat, y_train11)
+
+x = np.linspace(0, 1, num=100)
+g_x = []
+fb_x = []
+for i in range(100):
+    g_val = a @ np.array([x[i] ** 0, x[i] ** 1, x[i] ** 2])
+    g_x.append(g_val)
+
+    fb_val = b_est @ np.array([x[i] ** 0, x[i] ** 1, x[i] ** 2])
+    fb_x.append(fb_val)
+
+plt.figure(2)
+plt.plot(x, g_x)
+plt.plot(x, fb_x)
+plt.scatter(x_train11, y_train11, color = 'green') 
+
+plt.legend(['g(x)', 'f_b(x)', 'training data'])
+plt.show()
+
+
+#%%
+###################
+## PLOT 2, d = 5 ##
+###################
+
+## N = 100
+
+d = 5
+a = get_a(d)
+
+x_train11, y_train11 = draw_sample_with_noise(d, a, 100)
+x_train11_mat = get_design_mat(x_train11, d)
+x_test11, y_test11 = draw_sample_with_noise(d, a, 100)
+x_test11 = get_design_mat(x_test11, d)
+
+b_est = least_square_estimator(x_train11_mat, y_train11)
+
+x = np.linspace(0, 1, num=100)
+g_x = []
+fb_x = []
+for i in range(100):
+    g_val = a @ np.array([x[i] ** 0, x[i] ** 1, x[i] ** 2, x[i] ** 3, x[i] ** 4, x[i] ** 5])
+    g_x.append(g_val)
+
+    fb_val = b_est @ np.array([x[i] ** 0, x[i] ** 1, x[i] ** 2, x[i] ** 3, x[i] ** 4, x[i] ** 5])
+    fb_x.append(fb_val)
+
+plt.figure(3)
+plt.plot(x, g_x)
+plt.plot(x, fb_x)
+plt.scatter(x_train11, y_train11, color = 'green') 
+plt.legend(['g(x)', 'f_b(x)', 'training data'])
+plt.show()
+
+#%%
+## N = 500
+
+d = 5
+a = get_a(d)
+
+x_train11, y_train11 = draw_sample_with_noise(d, a, 500)
+x_train11_mat = get_design_mat(x_train11, d)
+x_test11, y_test11 = draw_sample_with_noise(d, a, 500)
+x_test11 = get_design_mat(x_test11, d)
+
+b_est = least_square_estimator(x_train11_mat, y_train11)
+
+x = np.linspace(0, 1, num=100)
+g_x = []
+fb_x = []
+for i in range(100):
+    g_val = a @ np.array([x[i] ** 0, x[i] ** 1, x[i] ** 2, x[i] ** 3, x[i] ** 4, x[i] ** 5])
+    g_x.append(g_val)
+
+    fb_val = b_est @ np.array([x[i] ** 0, x[i] ** 1, x[i] ** 2, x[i] ** 3, x[i] ** 4, x[i] ** 5])
+    fb_x.append(fb_val)
+
+plt.figure(4)
+plt.plot(x, g_x)
+plt.plot(x, fb_x)
+plt.scatter(x_train11, y_train11, color = 'green') 
+plt.legend(['g(x)', 'f_b(x)', 'training data'])
+plt.show()
 
 # %%
+####################
+## PLOT 2, d = 10 ##
+####################
+
+## N = 100
+
+d = 10
+a = get_a(d)
+
+x_train11, y_train11 = draw_sample_with_noise(d, a, 100)
+x_train11_mat = get_design_mat(x_train11, d)
+x_test11, y_test11 = draw_sample_with_noise(d, a, 100)
+x_test11 = get_design_mat(x_test11, d)
+
+b_est = least_square_estimator(x_train11_mat, y_train11)
+
+x = np.linspace(0, 1, num=100)
+g_x = []
+fb_x = []
+for i in range(100):
+    g_val = a @ np.array([x[i] ** 0, x[i] ** 1, x[i] ** 2, x[i] ** 3, x[i] ** 4, x[i] ** 5, x[i] ** 6, x[i] ** 7, x[i] ** 8, x[i] ** 9, x[i] ** 10])
+    g_x.append(g_val)
+
+    fb_val = b_est @ np.array([x[i] ** 0, x[i] ** 1, x[i] ** 2, x[i] ** 3, x[i] ** 4, x[i] ** 5, x[i] ** 6, x[i] ** 7, x[i] ** 8, x[i] ** 9, x[i] ** 10])
+    fb_x.append(fb_val)
+
+plt.figure(5)
+plt.plot(x, g_x)
+plt.plot(x, fb_x)
+plt.scatter(x_train11, y_train11, color = 'green') 
+plt.legend(['g(x)', 'f_b(x)', 'training data'])
+plt.show()
+
+#%%
+## N = 500
+
+d = 10
+a = get_a(d)
+
+x_train11, y_train11 = draw_sample_with_noise(d, a, 500)
+x_train11_mat = get_design_mat(x_train11, d)
+x_test11, y_test11 = draw_sample_with_noise(d, a, 500)
+x_test11 = get_design_mat(x_test11, d)
+
+b_est = least_square_estimator(x_train11_mat, y_train11)
+
+x = np.linspace(0, 1, num=100)
+g_x = []
+fb_x = []
+for i in range(100):
+    g_val = a @ np.array([x[i] ** 0, x[i] ** 1, x[i] ** 2, x[i] ** 3, x[i] ** 4, x[i] ** 5, x[i] ** 6, x[i] ** 7, x[i] ** 8, x[i] ** 9, x[i] ** 10])
+    g_x.append(g_val)
+
+    fb_val = b_est @ np.array([x[i] ** 0, x[i] ** 1, x[i] ** 2, x[i] ** 3, x[i] ** 4, x[i] ** 5, x[i] ** 6, x[i] ** 7, x[i] ** 8, x[i] ** 9, x[i] ** 10])
+    fb_x.append(fb_val)
+
+plt.figure(5)
+plt.plot(x, g_x)
+plt.plot(x, fb_x)
+plt.scatter(x_train11, y_train11, color = 'green') 
+plt.legend(['g(x)', 'f_b(x)', 'training data'])
+plt.show()
+# %%
+######################
+### PROBLEM TWELVE ###
+######################
+
+plt.figure(6)
+plt.plot(N_2, eg_2, color = 'green')
+plt.plot(N_5, eg_5, color = 'blue')
+plt.plot(N_10, eg_10, color = 'orange')
+plt.legend(['d=2', 'd=5', 'd=10'])
 
 # %%
