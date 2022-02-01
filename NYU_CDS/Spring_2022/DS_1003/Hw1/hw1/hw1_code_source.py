@@ -104,8 +104,6 @@ def empirical_risk(X, y, b):
     emp_risk = sum_sq_differences / len(y_est)
 
     return emp_risk 
-
-
 #%%
 ####################
 ### PROBLEM NINE ###
@@ -132,6 +130,7 @@ for i in range(100):
     fb_x.append(fb_val)
 
 plt.figure(0)
+plt.title('X and Y Values Represented by Different Functions')
 plt.scatter(x_train, y_train) 
 plt.plot(x, fb_x, 'b', label = 'f_b(x)')
 plt.plot(x, g_x, 'g')
@@ -244,6 +243,7 @@ plt.plot(N_2, eg_10)
 ax = plt.gca()
 ax.set_ylim([-10, 15])
 
+plt.title('Log Error (Y Axis) Over Different Values of N (X Axis)')
 plt.legend(labels=['d=2 e_t','d=2 e_g','d=5 e_t', 'd=5 e_g', 'd=10 e_t','d=10 e_g'])
 #%%
 ###################
@@ -273,6 +273,7 @@ for i in range(100):
     fb_x.append(fb_val)
 
 plt.figure(1)
+plt.title('X and Y Values for Different Functions, d = 2, N = 100')
 plt.plot(x, g_x)
 plt.plot(x, fb_x)
 plt.scatter(x_train11, y_train11, color = 'green') 
@@ -306,7 +307,7 @@ plt.figure(2)
 plt.plot(x, g_x)
 plt.plot(x, fb_x)
 plt.scatter(x_train11, y_train11, color = 'green') 
-
+plt.title('X and Y Values for Different Functions, d = 2, N = 500')
 plt.legend(['g(x)', 'f_b(x)', 'training data'])
 plt.show()
 
@@ -343,6 +344,7 @@ plt.plot(x, g_x)
 plt.plot(x, fb_x)
 plt.scatter(x_train11, y_train11, color = 'green') 
 plt.legend(['g(x)', 'f_b(x)', 'training data'])
+plt.title('X and Y Values for Different Functions, d = 5, N = 100')
 plt.show()
 
 #%%
@@ -373,6 +375,7 @@ plt.plot(x, g_x)
 plt.plot(x, fb_x)
 plt.scatter(x_train11, y_train11, color = 'green') 
 plt.legend(['g(x)', 'f_b(x)', 'training data'])
+plt.title('X and Y Values for Different Functions, d = 5, N = 500')
 plt.show()
 
 # %%
@@ -407,6 +410,7 @@ plt.plot(x, g_x)
 plt.plot(x, fb_x)
 plt.scatter(x_train11, y_train11, color = 'green') 
 plt.legend(['g(x)', 'f_b(x)', 'training data'])
+plt.title('X and Y Values for Different Functions, d = 10, N = 100')
 plt.show()
 
 #%%
@@ -437,6 +441,7 @@ plt.plot(x, g_x)
 plt.plot(x, fb_x)
 plt.scatter(x_train11, y_train11, color = 'green') 
 plt.legend(['g(x)', 'f_b(x)', 'training data'])
+plt.title('X and Y Values for Different Functions, d = 10, N = 500')
 plt.show()
 # %%
 ######################
@@ -444,9 +449,33 @@ plt.show()
 ######################
 
 plt.figure(6)
+plt.title('Log Estimation Error (Y Axis) Across Values of N (X Axis)')
 plt.plot(N_2, eg_2, color = 'green')
 plt.plot(N_5, eg_5, color = 'blue')
 plt.plot(N_10, eg_10, color = 'orange')
 plt.legend(['d=2', 'd=5', 'd=10'])
 
 # %%
+########################
+### PROBLEM THIRTEEN ###
+########################
+
+'''It appears that raising N allows the estimation error to close in on 0. This makes sense because
+as more data is available to train on, the estimation parameters reach the true population 
+parameters. As such, we expect that increasing N decreases the estimation error until it hits
+(or almost hits) 0. 
+
+It appears that increasing d, in this particular case, creates additional error when N is small. 
+However, once N becomes sufficiently large, it seems that all three values of ultimately
+converge on an error of 0.'''
+#%%
+########################
+### PROBLEM FOURTEEN ###
+########################
+
+'''Optimization error is defined as the difference between a given empirical risk minimizer and the
+actual function returned by whatever computation we complete. In this case, as far as we know,
+the function we have returned optimizes risk in the empirical sense. In other words, our 
+b estimate should be the empirical risk minimizer. Therefore, optimization error should be negligible
+in this case. Given limitation of computing and the packages we used, there may be some, but it 
+is not noteworthy. '''
