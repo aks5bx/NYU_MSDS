@@ -216,7 +216,7 @@ def batch_grad_descent(X, y, alpha=0.1, num_step=1000, grad_check=False):
     theta = np.zeros(num_features)  #Initialize theta
     #TODO
 
-    for step in range(num_step):
+    for step in range(num_step+1):
         # Conduct step into gradient descent 
         sq_loss_gradient = compute_square_loss_gradient(X, y, theta)
 
@@ -318,5 +318,49 @@ def load_data():
     X_train = np.hstack((X_train, np.ones((X_train.shape[0], 1))))  # Add bias term
     X_test = np.hstack((X_test, np.ones((X_test.shape[0], 1))))
     return X_train, y_train, X_test, y_test
+
+# %%
+###########################
+### PROBLEM TWELVE PLOT ###
+###########################
+
+X_train, y_train, X_test, y_test = load_data()
+
+x_axis = np.arange(1, 1002, 1, dtype=int)
+losses = []
+steps = [0.5, 0.1, .05, 0.01]
+for step in steps:
+    x, y = batch_grad_descent(X_train, y_train, alpha=step, num_step=1000, grad_check=False)
+    losses.append(y)
+
+plt.figure(0)
+plt.plot(x_axis, np.log(losses[0]), label = 'Alpha = 0.5')
+plt.plot(x_axis, np.log(losses[1]), label = 'Alpha = 0.1')
+plt.legend(loc="upper left")
+plt.title('TRAIN Diverging Losses: Log Loss (Y Axis) vs Num Steps (X Axis)')
+
+
+plt.figure(1)
+plt.plot(x_axis, losses[2], label = 'Alpha = 0.05')
+plt.plot(x_axis, losses[3], label = 'Alpha = 0.01')
+plt.legend(loc="upper left")
+plt.title('TRAIN Converging Losses: Loss (Y Axis) vs Num Steps (X Axis)')
+
+
+# %%
+#############################
+### PROBLEM THIRTEEN PLOT ###
+#############################
+
+thetas, loss_vals = batch_grad_descent(X_train, y_train, alpha=0.05, num_step=1000)
+
+avg_losses = []
+for i in range (0,1001):
+    avg_losses.append(compute_square_loss(X_test, y_test, thetas[i]))
+
+
+plt.figure(0)
+plt.plot(x_axis, avg_losses)
+plt.title('TEST Loss (Y Axis) vs Iterations (X Axis)')
 
 # %%
