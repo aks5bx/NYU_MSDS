@@ -76,7 +76,17 @@ def compute_square_loss(X, y, theta):
     """
     #TODO
 
+    m = X.shape[0]
+    
+    pt1 = theta @ X.transpose() @ X @ theta 
+    pt2 = 2 * ((X @ theta).transpose() @ y)
+    pt3 = y.transpose() @ y
 
+    loss = (pt1 - pt2 + pt3) * (1/m)
+    
+    return loss
+
+#%%
 #######################################
 ### The gradient of the square loss function
 def compute_square_loss_gradient(X, y, theta):
@@ -93,7 +103,16 @@ def compute_square_loss_gradient(X, y, theta):
     """
     #TODO
 
+    m = X.shape[0]
 
+    pt1 = X.T @ X @ theta 
+    pt2 = X.T @ y
+
+    res = (pt1 - pt2) * (2/m)
+
+    return res
+
+#%%
 #######################################
 ### Gradient checker
 #Getting the gradient calculation correct is often the trickiest part
@@ -136,6 +155,28 @@ def grad_checker(X, y, theta, epsilon=0.01, tolerance=1e-4):
     #TODO
 
 
+    # for each coordinate direction 
+    for i in range(num_features):
+        # Define our e_i, overwrite the 0 in the ith position with a 1
+        epsilon_i = np.zeros(num_features)
+        epsilon_i[i] = 1 
+
+        # Compute approximation of the derivative
+        approx1 = compute_square_loss(X, y, theta + (epsilon * epsilon_i))
+        approx2 = compute_square_loss(X, y, theta - (epsilon * epsilon_i))
+        approx_res = (approx1 - approx2) / (2 * epsilon)
+
+        approx_grad[i] = approx_res
+
+    # Compute euclidean distance between true and approxmiate
+    euc_diff = np.linalg.norm(approx_grad-true_gradient)
+
+    if euc_diff > tolerance: 
+        return False
+    else:
+        return True
+
+#%%
 #######################################
 ### Generic gradient checker
 def generic_gradient_checker(X, y, theta, objective_func, gradient_func, 
@@ -149,7 +190,7 @@ def generic_gradient_checker(X, y, theta, objective_func, gradient_func,
     #TODO
 
 
-
+#%%
 #######################################
 ### Batch gradient descent
 def batch_grad_descent(X, y, alpha=0.1, num_step=1000, grad_check=False):
@@ -175,8 +216,20 @@ def batch_grad_descent(X, y, alpha=0.1, num_step=1000, grad_check=False):
     theta = np.zeros(num_features)  #Initialize theta
     #TODO
 
+    for step in range(num_step):
+        # Conduct step into gradient descent 
+        sq_loss_gradient = compute_square_loss_gradient(X, y, theta)
 
+        # Update tracked values
+        theta_hist[step,:] = theta
+        loss_hist[step] = compute_square_loss(X, y, theta)
 
+        # Update theta
+        theta -= (alpha * sq_loss_gradient)
+
+    return theta_hist, loss_hist
+
+#%%
 #######################################
 ### The gradient of regularized batch gradient descent
 def compute_regularized_square_loss_gradient(X, y, theta, lambda_reg):
@@ -194,7 +247,7 @@ def compute_regularized_square_loss_gradient(X, y, theta, lambda_reg):
     """
     #TODO
 
-
+#%%
 #######################################
 ### Regularized batch gradient descent
 def regularized_grad_descent(X, y, alpha=0.05, lambda_reg=10**-2, num_step=1000):
