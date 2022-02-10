@@ -247,6 +247,16 @@ def compute_regularized_square_loss_gradient(X, y, theta, lambda_reg):
     """
     #TODO
 
+    m = X.shape[0]
+
+    pt1 = X.T @ X @ theta 
+    pt2 = X.T @ y
+
+    res1 = (pt1 - pt2) * (2/m)
+    res = res1 + (2 * lambda_reg * theta)
+
+    return res
+
 #%%
 #######################################
 ### Regularized batch gradient descent
@@ -270,7 +280,18 @@ def regularized_grad_descent(X, y, alpha=0.05, lambda_reg=10**-2, num_step=1000)
     loss_hist = np.zeros(num_step+1) #Initialize loss_hist
     #TODO
 
+    for step in range(num_step+1):
+        # Conduct step into gradient descent 
+        sq_loss_gradient = compute_regularized_square_loss_gradient(X, y, theta, lambda_reg)
 
+        # Update tracked values
+        theta_hist[step,:] = theta
+        loss_hist[step] = compute_square_loss(X, y, theta)
+
+        # Update theta
+        theta -= (alpha * sq_loss_gradient)
+
+    return theta_hist, loss_hist
 
 #######################################
 ### Stochastic gradient descent
@@ -362,5 +383,116 @@ for i in range (0,1001):
 plt.figure(0)
 plt.plot(x_axis, avg_losses)
 plt.title('TEST Loss (Y Axis) vs Iterations (X Axis)')
+
+# %%
+#########################
+### PROBLEM SEVENTEEN ###
+#########################
+
+X_train, y_train, X_test, y_test = load_data()
+
+x_axis = np.arange(1, 1002, 1, dtype=int)
+losses = []
+avg_losses_store = []
+lambdas = [10**-7, 10**-5, 10**-3, 10**-1, 1, 10, 100] 
+for lambda_val in lambdas[0:4]:
+    x, y = regularized_grad_descent(X_train, y_train, alpha=0.05, lambda_reg=lambda_val, num_step=1000)
+    losses.append(y)
+
+    avg_losses = []
+    for i in range (0,1001):
+        avg_losses.append(compute_square_loss(X_test, y_test, x[i]))
+
+    avg_losses_store.append(avg_losses)
+
+    plt.figure(3)
+    plt.plot(x_axis, avg_losses, label = str(lambda_val))
+    plt.title('TEST Loss (Y Axis) vs Iterations (X Axis)')
+    plt.legend(loc="upper left")
+
+for lambda_val in lambdas[4:]:
+    x, y = regularized_grad_descent(X_train, y_train, alpha=0.05, lambda_reg=lambda_val, num_step=1000)
+    losses.append(y)
+
+    avg_losses = []
+    for i in range (0,1001):
+        avg_losses.append(compute_square_loss(X_test, y_test, x[i]))
+
+    avg_losses_store.append(avg_losses)
+
+    plt.figure(4)
+    plt.plot(x_axis, avg_losses, label = str(lambda_val))
+    plt.title('TEST Loss (Y Axis) vs Iterations (X Axis)')
+    plt.legend(loc="upper left")
+    
+
+plt.figure(5)
+plt.plot(x_axis, np.log(losses[0]), label = 'Lambda = 10e-7')
+plt.plot(x_axis, np.log(losses[1]), label = 'Lambda = 10e-5')
+plt.plot(x_axis, np.log(losses[2]), label = 'Lambda = 10e-3')
+plt.plot(x_axis, np.log(losses[3]), label = 'Lambda = 10e-1')
+plt.legend(loc="upper left")
+plt.title('TRAIN Converging Losses: Log Loss (Y Axis) vs Num Steps (X Axis)')
+
+plt.figure(6)
+plt.plot(x_axis, np.log(losses[4]), label = 'Lambda = 1')
+plt.plot(x_axis, np.log(losses[5]), label = 'Lambda = 10')
+plt.plot(x_axis, np.log(losses[6]), label = 'Lambda = 100')
+plt.legend(loc="upper left")
+plt.title('TRAIN Diverging Losses: Log Loss (Y Axis) vs Num Steps (X Axis)')
+
+# %%
+########################
+### PROBLEM EIGHTEEN ###
+########################
+
+train_sq_losses = [losses[0][-1], losses[1][-1], losses[2][-1], losses[3][-1], losses[4][-1], losses[5][-1], losses[6][-1]]
+test_sq_losses = [avg_losses_store[0][-1], avg_losses_store[1][-1], avg_losses_store[2][-1], avg_losses_store[3][-1], avg_losses_store[4][-1], avg_losses_store[5][-1], avg_losses_store[6][-1]]
+
+plt.figure(7)
+plt.scatter(lambdas, np.log(train_sq_losses), label = 'Train Losses')
+plt.legend(loc="upper left")
+ax = plt.gca()
+ax.set_xscale('log')
+plt.title('Log Train Losses (Y Axis) Vs Lambda Value (X Axis)')
+
+
+plt.figure(8)
+plt.scatter(lambdas, np.log(test_sq_losses), label = 'Test Losses')
+plt.legend(loc="upper left")
+ax = plt.gca()
+ax.set_xscale('log')
+plt.title('Log Test Losses (Y Axis) Vs Lambda Value (X Axis)')
+
+'''
+Based on the information I have from this and previous problems, 
+I would choose the lambda = 0.001 
+'''
+
+# %%
+########################
+### PROBLEM NINETEEN ###
+########################
+
+test_sq_losses_min = [min(losses[0]), min(losses[1]), min(losses[2]), min(losses[3]), min(losses[4]), min(losses[5]), min(losses[6])]
+
+plt.figure(9)
+plt.scatter(lambdas, np.log(test_sq_losses), label = 'Test Losses (Last)')
+plt.scatter(lambdas, np.log(test_sq_losses_min), label = 'Test Losses (Min)')
+plt.legend(loc="upper left")
+ax = plt.gca()
+ax.set_xscale('log')
+plt.title('Log Test Losses, Log Test Losses (Min) (Y Axis) Vs Lambda Value (X Axis)')
+
+plt.figure(10)
+plt.scatter(lambdas, np.log(test_sq_losses_min), label = 'Test Losses (Min)')
+plt.legend(loc="upper left")
+ax = plt.gca()
+ax.set_xscale('log')
+plt.title('Log Test Losses (Min) (Y Axis) Vs Lambda Value (X Axis)')
+
+'''
+The value I would select is the same as before
+'''
 
 # %%
