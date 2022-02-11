@@ -494,5 +494,4 @@ plt.title('Log Test Losses (Min) (Y Axis) Vs Lambda Value (X Axis)')
 '''
 The value I would select is the same as before
 '''
-
 # %%
