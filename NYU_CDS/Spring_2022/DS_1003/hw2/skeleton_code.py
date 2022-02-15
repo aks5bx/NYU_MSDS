@@ -466,7 +466,7 @@ plt.title('Log Test Losses (Y Axis) Vs Lambda Value (X Axis)')
 
 '''
 Based on the information I have from this and previous problems, 
-I would choose the lambda = 0.001 
+I would choose the lambda = 0.01 
 '''
 
 # %%

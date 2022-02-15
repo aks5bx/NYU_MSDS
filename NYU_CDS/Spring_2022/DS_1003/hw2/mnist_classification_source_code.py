@@ -50,6 +50,9 @@ def sub_sample(N_train, X_train, y_train):
     return X_train[:N_train, :], y_train[:N_train]
 
 #%%
+##################
+### PROBLEM 28 ###
+##################
 def classification_error(clf, X, y):
     preds = clf.predict(X)
     differences = np.sum(preds != y)    
@@ -111,7 +114,7 @@ for alpha_val in alphas:
 
 # %%
 plt.figure(0)
-plt.errorbar(alphas, means, xerr = stds,fmt='o',ecolor = 'red')
+plt.errorbar(alphas, means, yerr = stds,fmt='o',ecolor = 'red')
 plt.legend(loc="upper left")
 ax = plt.gca()
 ax.set_xscale('log')
