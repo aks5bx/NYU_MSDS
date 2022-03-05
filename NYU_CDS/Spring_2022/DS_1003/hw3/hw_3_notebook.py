@@ -163,55 +163,138 @@ while not termination_condition:
     random.shuffle(order)
 
     loop_counter += 1
-    print(loop_counter)
+
     if loop_counter == 10:
         termination_condition = True
 
-print("--- %s seconds ---" % (time.time() - start_time))
+baseline_approach = time.time() - start_time
+
+print("--- %s seconds ---" % (baseline_approach))
+
+w
 
 # %%
 #################
 ### PROBLEM 9 ###
 #################
 
-start_time = time.time()
 
-lambda_val = 0.01
-t = 1
-w = {}
-termination_condition = False 
-loop_counter = 0
-order = np.arange(0, len(X_train), 1)
-s = 1
+def pegasos_sw(X_train, y_train, lambda_val, epochs, loud):
+    start_time = time.time()
 
-while not termination_condition:
-    for i in order:
-        t += 1
-        n_t = 1 / (t * lambda_val)
-        s = (1 - (n_t * lambda_val)) * s
+    lambda_val = lambda_val
+    t = 1
+    w = {}
+    termination_condition = False 
+    loop_counter = 0
+    order = np.arange(0, len(X_train), 1)
+    s = 1
 
-        if y_train[i] * dotProduct(w, X_train[i]) < 1:
-            '''
-            part1 = {}
-            increment(part1, (1 - (n_t * lambda_val)), w)
-            increment(part1, n_t * y_train[i], X_train[i])
-            w = part1
-            '''
+    while not termination_condition:
+        for i in order:
+            t += 1
+            n_t = 1 / (t * lambda_val)
+            s = (1 - (n_t * lambda_val)) * s
 
-            increment(w, n_t * y_train[i] / s, X_train[i])
+            if y_train[i] * dotProduct(w, X_train[i]) < 1:
+                '''
+                part1 = {}
+                increment(part1, (1 - (n_t * lambda_val)), w)
+                increment(part1, n_t * y_train[i], X_train[i])
+                w = part1
+                '''
 
-    random.shuffle(order)
+                increment(w, n_t * y_train[i] / s, X_train[i])
 
-    loop_counter += 1
-    print(loop_counter)
-    if loop_counter == 10:
-        termination_condition = True
+        random.shuffle(order)
+
+        loop_counter += 1
+
+        if loop_counter == epochs:
+            termination_condition = True
 
 
-new_w = {}
-increment(new_w, s, w)
-w = new_w
+    new_w = {}
+    increment(new_w, s, w)
 
-print("--- %s seconds ---" % (time.time() - start_time))
+    sW_approach = time.time() - start_time
+
+    if loud:
+        print("--- %s seconds ---" % (sW_approach))
+
+    return new_w
+
+pegasos_sw(X_train, y_train, 0.01, 10, True)
+
+# %%
+##################
+### PROBLEM 10 ###
+##################
+
+print('COMPARING RUN TIMES FOR 10 EPOCHS')
+print('TIME FOR BASELINE RUN :', baseline_approach, ' SECONDS')
+print('TIME FOR sW APPROACH RUN :', sW_approach, ' SECONDS')
+# %%
+##################
+### PROBLEM 11 ###
+##################
+
+def classification_error(w, X, y):
+    errors = 0
+    num_iter = len(X)
+
+    for i in range(num_iter):
+        wx = dotProduct(w, X[i])
+
+        if wx < 0:
+            y_pred = -1
+        else:
+            y_pred = 1
+
+        if y_pred != y[i]:
+            errors += 1
+    
+    error_rate = errors / num_iter
+
+    return error_rate
+
+## Sample Run
+classification_error(w, X_test, y_test)
+
+# %%
+##################
+### PROBLEM 12 ###
+##################
+
+## First Pass
+lambdas = [0.0001, 0.001, 0.01, 0.1]
+errors = []
+
+for lambda_val in lambdas:
+    w = pegasos_sw(X_train, y_train, lambda_val, 10, False)
+    error = classification_error(w, X_test, y_test)
+    errors.append(error)
+
+min_ind = errors.index(min(errors))
+best_lambda = lambdas[min_ind]
+best_lambda
+
+#%%
+## Best lambda is between 0.01 and 0.001 (discerned after multiple trials)
+## Second Pass
+
+lambdas = [0.001, 0.002, 0.003, 0.004, 0.005, 0.006, 0.007, 0.008, 0.009, 0.01]
+errors = []
+
+for lambda_val in lambdas:
+    w = pegasos_sw(X_train, y_train, lambda_val, 10, False)
+    error = classification_error(w, X_test, y_test)
+    errors.append(error)
+
+min_ind = errors.index(min(errors))
+best_lambda = lambdas[min_ind]
+
+print('BEST LAMBDA VALUE :', best_lambda)
+print('ERROR :', min(errors))
 
 # %%
