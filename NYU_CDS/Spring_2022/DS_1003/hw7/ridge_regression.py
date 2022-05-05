@@ -21,6 +21,20 @@ class RidgeRegression(BaseEstimator, RegressorMixin):
         # Build computation graph
         # TODO: ADD YOUR CODE HERE
 
+        # Computation Graph Function requires: inputs, outcomes, parameters, prediction, objective as parameters
+        # Everything is already defined for us except objective
+
+        # OBJECTIVE FUNCTION:||Y -  XW||^2 + ( lambda * ||W||^2 )
+        # First we get the residuals 
+        residuals = nodes.SquaredL2DistanceNode(self.y, self.prediction, 'residual')
+        # Now we get the regularization term 
+        regularization = nodes.L2NormPenaltyNode(l2_reg, self.w, 'regularization')
+        # Now we add the residuals + regularization term 
+        objective = nodes.SumNode(residuals, regularization, 'objective')
+        # Finally we build our computation graph 
+        self.graph = graph.ComputationGraphFunction([self.x], [self.y], [self.w, self.b], self.prediction, objective)
+
+
         
     def fit(self, X, y):
         num_instances, num_ftrs = X.shape
