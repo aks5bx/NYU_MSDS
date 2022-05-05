@@ -188,16 +188,71 @@ class AffineNode(object):
         x: node for which x.out is a numpy array of shape (d)
         b: node for which b.out is a numpy array of shape (m) (i.e. vector of length m)
     """
-    pass
+    def __init__(self, W, x, b, node_name):
+        self.node_name = node_name
+        self.out = None
+        self.d_out = None
+        self.W = W
+        self.x = x
+        self.b = b
 
+    def forward(self):
+        # Your code
+        # Numpy matrix multiplication 
+        Wx = np.matmul(self.W.out, self.x.out)
+        Wx_plus_b = Wx + self.b.out
+        
+        self.out = Wx_plus_b
+        self.d_out = np.zeros(self.out.shape)
+        return self.out
+
+    def backward(self):
+        # Return derivatives for W, x, b
+        # Note: since y = Wx + b, this node is computing y 
+        # dJ / dW = dJ / dj o x 
+        d_W = np.outer(self.d_out, self.x.out)
+        # dJ / dx = Wt * (dJ / dy)
+        d_x = np.matmul(self.W.out.transpose(), (self.d_out))
+        # dJ / db = dJ / dy
+        d_b = self.d_out
+
+        self.W.d_out = d_W
+        self.x.d_out = d_x
+        self.b.d_out = d_b
+
+        return self.d_out
+
+    def get_predecessors(self):
+        # Your code
+        return [self.W, self.x, self.b]
 
 class TanhNode(object):
     """Node tanh(a), where tanh is applied elementwise to the array a
         Parameters:
         a: node for which a.out is a numpy array
     """
-    pass
+    def __init__(self, a, node_name):
+        self.node_name = node_name
+        self.out = None
+        self.d_out = None
+        self.a = a
 
+    def forward(self):
+        # Your code
+        self.out = np.tanh(self.a.out)
+        self.d_out = np.zeros(self.out.shape)
+        return self.out
+
+    def backward(self):
+        # Your code
+        # d/dx tanh(x) = 1 - (tanhx)^2
+        d_a = (1 - ((np.tanh(self.a.out)) ** 2)) * self.d_out
+        self.a.d_out = d_a
+        return self.d_out
+
+    def get_predecessors(self):
+        # Your code
+        return [self.a]
 
 class SoftmaxNode(object):
     """ Softmax node

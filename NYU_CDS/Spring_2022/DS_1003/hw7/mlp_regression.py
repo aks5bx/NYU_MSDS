@@ -20,6 +20,36 @@ class MLPRegression(BaseEstimator, RegressorMixin):
         # Build computation graph
         # TODO: ADD YOUR CODE HERE
 
+        # Computation Graph Function requires: inputs, outcomes, parameters, prediction, objective as parameters
+
+        inputs = nodes.ValueNode(node_name="x") # to hold a vector input
+        outcomes = nodes.ValueNode(node_name="y") # to hold a scalar response
+        
+        W1 = nodes.ValueNode(node_name="W1") # to hold the parameter vector
+        b1 = nodes.ValueNode(node_name="b1") # to hold the parameter vector
+        W2 = nodes.ValueNode(node_name="w2") # to hold the parameter vector
+        b2 = nodes.ValueNode(node_name="b2") # to hold the parameter vector
+        parameters = [W1, b1, W2, b2]
+
+        # Layer 1: L = W2x + b2
+        L = nodes.AffineNode(W1, inputs, b1, node_name="layer1")
+
+        # Layer 2: h = tanh(L)
+        h = nodes.TanhNode(L, "layer2")
+
+        # Prediction: f = W2h + b2
+        prediction = nodes.VectorScalarAffineNode(h, W2, b2, 'prediction')
+
+        # Since we have no regularization term, we use regular l2 norm
+        objective = nodes.SquaredL2DistanceNode(prediction, outcomes, 'objective')
+
+        self.graph = graph.ComputationGraphFunction([inputs], [outcomes], parameters, prediction, objective)
+
+
+
+
+
+
     def fit(self, X, y):
         num_instances, num_ftrs = X.shape
         y = y.reshape(-1)
